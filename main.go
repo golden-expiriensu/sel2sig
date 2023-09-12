@@ -1,27 +1,32 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/golden-expiriensu/sel2sig/args"
+	"github.com/golden-expiriensu/sel2sig/input"
 	"github.com/golden-expiriensu/sel2sig/search"
 )
 
 func main() {
-	searchFolder, selector, err := args.GetArgs()
+	in, err := input.FromOSArgs()
 	if err != nil {
 		log.Fatalf("failed to parse args: %v", err)
 	}
 
-	result, err := search.SearchDirectory(searchFolder, selector)
-	if errors.Is(err, search.ErrNotFound) {
-		log.Fatal("selector origin is not found")
-	}
+	result, err := search.SearchDirectory(in.Directory(), in.Selector())
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("\n%s\n", result)
+	if in.Operation() == input.OperationSearch {
+		os.Exit(0)
+	}
 
-	fmt.Println(result)
+	unpacked, err := result.Unpack(in.SelectorWithArgs())
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("args: %v\n", unpacked)
 }

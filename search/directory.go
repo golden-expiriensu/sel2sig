@@ -6,16 +6,16 @@ import (
 	"path"
 )
 
-func SearchDirectory(dirPath string, selector [4]byte) (string, error) {
+func SearchDirectory(dirPath string, selector [4]byte) (Result, error) {
 	baseDir, err := os.ReadDir(dirPath)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	for _, entry := range baseDir {
 		path := path.Join(dirPath, entry.Name())
 
-		var result string
+		var result Result
 		if entry.IsDir() {
 			result, err = SearchDirectory(path, selector)
 		} else {
@@ -28,11 +28,8 @@ func SearchDirectory(dirPath string, selector [4]byte) (string, error) {
 		if errors.Is(err, ErrNotFound) {
 			continue
 		}
-		if err != nil {
-			return "", err
-		}
-		return result, nil
+		return result, err
 	}
 
-	return "", ErrNotFound
+	return nil, ErrNotFound
 }

@@ -9,33 +9,47 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
 
-type Artifact struct {
-	ABI abi.ABI
+type Result interface {
+	String() string
+	Unpack([]byte) (interface{}, error)
 }
 
 var ErrNotFound = errors.New("origin of selector is not found")
 
-func SearchFile(filepath string, selector [4]byte) (string, error) {
+func SearchFile(filepath string, selector [4]byte) (Result, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
-		return "", fmt.Errorf("failed to open artifact file: %w", err)
+		return nil, fmt.Errorf("failed to open artifact file: %w", err)
 	}
 	defer file.Close()
 
-	var artifact Artifact
+	var artifact struct {
+		ABI abi.ABI
+	}
 	if err = json.NewDecoder(file).Decode(&artifact); err != nil {
-		return "", fmt.Errorf("can't decode artifact source: %w", err)
+		return nil, fmt.Errorf("can't decode artifact source: %w", err)
 	}
 
 	resultMethod, _ := artifact.ABI.MethodById(selector[:])
 	if resultMethod != nil {
-		return resultMethod.String(), nil
+		return extendedMethod(*resultMethod), nil
 	}
 
 	resultError, _ := artifact.ABI.ErrorByID(selector)
 	if resultError != nil {
-		return resultError.String(), nil
+		return resultError, nil
 	}
 
-	return "", ErrNotFound
+	return nil, ErrNotFound
+}
+
+type extendedMethod abi.Method
+
+func (m extendedMethod) String() string {
+	return abi.Method(m).String()
+}
+
+func (m extendedMethod) Unpack(args []byte) (interface{}, error) {
+	inputs := abi.Method(m).Inputs
+	return inputs.Unpack(args[4:])
 }
