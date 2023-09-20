@@ -30,26 +30,38 @@ You can provide calldata in one of the following ways:
 
 To build **sel2sig**, follow these steps:
 
-1. Execute the following command to build the tool:
+1. Clone this repository to [GOPATH](https://pkg.go.dev/cmd/go#hdr-GOPATH_environment_variable)/src/:
+
+   ```
+   cd "$(go env GOPATH)" && git clone https://github.com/golden-expiriensu/sel2sig
+   ```
+
+2. Execute the following command to build the tool:
 
    ```
    go build -o sel2sig
    ```
 
-2. Make the tool executable by running:
+3. Make the tool executable by running:
 
    ```
    chmod +x sel2sig
    ```
 
+4. Move executable to the system's PATH so that you can run it from any location:
+
+   ```
+   sudo mv sel2sig /usr/local/bin
+   ```
+
 ## Example Usage
 
-Here's an example of how to use **sel2sig**:
+Below are examples of how to use the tool. Please note that all these commands were executed within the folder containing 'artifacts' folder with compilation results of [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master)'s smart contracts.
 
 1. Find origin of a selector:
 
    ```
-   $ ./sel2sig ~/solidity/pkg/openzeppelin/artifacts 0x70a08231
+   $ sel2sig ./artifacts 0x70a08231
    
     function balanceOf(address account) view returns(uint256)
    ```
@@ -57,7 +69,7 @@ Here's an example of how to use **sel2sig**:
 2. Decode calldata:
 
    ```
-   $ ./sel2sig ~/solidity/pkg/openzeppelin/artifacts 0xa9059cbb000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a80000
+   $ sel2sig ./artifacts 0xa9059cbb000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a80000
 
     function transfer(address to, uint256 amount) returns(bool)
     args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000]
@@ -65,7 +77,7 @@ Here's an example of how to use **sel2sig**:
 3. Decode received custom error:
 
    ```
-   $ ./sel2sig ~/solidity/pkg/openzeppelin/artifacts 0xe450d38c000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a8000000000000000000000000000000000000000000000000001043561a8829300000
+   $ sel2sig ./artifacts 0xe450d38c000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a8000000000000000000000000000000000000000000000000001043561a8829300000
 
     error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed)
     args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000 300000000000000000000]
@@ -73,7 +85,7 @@ Here's an example of how to use **sel2sig**:
 4. Decode error logs:
 
    ```
-   $ ./sel2sig ~/solidity/pkg/openzeppelin/artifacts ~/tmp/file_with_error_logs
+   $ sel2sig ./artifacts ./file_with_error_logs
 
     error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed)
     args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000 300000000000000000000]
