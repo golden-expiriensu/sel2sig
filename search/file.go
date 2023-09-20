@@ -32,7 +32,7 @@ func SearchFile(filepath string, selector [4]byte) (Result, error) {
 
 	resultMethod, _ := artifact.ABI.MethodById(selector[:])
 	if resultMethod != nil {
-		return extendedMethod(*resultMethod), nil
+		return method(*resultMethod), nil
 	}
 
 	resultError, _ := artifact.ABI.ErrorByID(selector)
@@ -41,15 +41,4 @@ func SearchFile(filepath string, selector [4]byte) (Result, error) {
 	}
 
 	return nil, ErrNotFound
-}
-
-type extendedMethod abi.Method
-
-func (m extendedMethod) String() string {
-	return abi.Method(m).String()
-}
-
-func (m extendedMethod) Unpack(args []byte) (interface{}, error) {
-	inputs := abi.Method(m).Inputs
-	return inputs.Unpack(args[4:])
 }

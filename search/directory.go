@@ -4,32 +4,68 @@ import (
 	"errors"
 	"os"
 	"path"
+	"sync"
 )
 
-func SearchDirectory(dirPath string, selector [4]byte) (Result, error) {
-	baseDir, err := os.ReadDir(dirPath)
-	if err != nil {
-		return nil, err
-	}
+type request struct {
+	path     string
+	selector [4]byte
+	results  chan Result
+	errors   chan error
+}
 
-	for _, entry := range baseDir {
-		path := path.Join(dirPath, entry.Name())
+func SearchDirectory(dir string, selector [4]byte) (Result, error) {
+	req := request{dir, selector, make(chan Result), make(chan error)}
 
-		var result Result
-		if entry.IsDir() {
-			result, err = SearchDirectory(path, selector)
-		} else {
-			if !IsArtifactFile(entry.Name()) {
-				continue
+	done := make(chan struct{})
+	go func() {
+		search(req)
+		close(done)
+	}()
+
+wait:
+	for {
+		select {
+		case err := <-req.errors:
+			if !errors.Is(err, ErrNotFound) {
+				return nil, err
 			}
-			result, err = SearchFile(path, selector)
+		case res := <-req.results:
+			return res, nil
+		case <-done:
+			break wait
 		}
-
-		if errors.Is(err, ErrNotFound) {
-			continue
-		}
-		return result, err
 	}
 
 	return nil, ErrNotFound
+}
+
+func search(req request) {
+	baseDir, err := os.ReadDir(req.path)
+	if err != nil {
+		req.errors <- err
+		return
+	}
+	var wg sync.WaitGroup
+	wg.Add(len(baseDir))
+
+	for _, entry := range baseDir {
+		go func(req request, entry os.DirEntry) {
+			defer wg.Done()
+			req.path = path.Join(req.path, entry.Name())
+
+			if entry.IsDir() {
+				search(req)
+			} else if IsArtifactFile(req.path) {
+				result, err := SearchFile(req.path, req.selector)
+				if err != nil {
+					req.errors <- err
+					return
+				}
+				req.results <- result
+			}
+		}(req, entry)
+	}
+
+	wg.Wait()
 }
