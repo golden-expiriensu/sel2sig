@@ -72,7 +72,11 @@ Below are examples of how to use the tool. Please note that all these commands w
    $ sel2sig ./artifacts 0xa9059cbb000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a80000
 
     function transfer(address to, uint256 amount) returns(bool)
-    args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000]
+
+    decoded args: [
+      0xe058fBFD6e991320C1Eb1B17808F742DE92410bC,
+      250000000000000000000
+    ]
    ```
 3. Decode received custom error:
 
@@ -80,7 +84,12 @@ Below are examples of how to use the tool. Please note that all these commands w
    $ sel2sig ./artifacts 0xe450d38c000000000000000000000000e058fBFD6e991320C1Eb1B17808F742DE92410bC00000000000000000000000000000000000000000000000d8d726b7177a8000000000000000000000000000000000000000000000000001043561a8829300000
 
     error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed)
-    args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000 300000000000000000000]
+
+    decoded args: [
+      0xe058fBFD6e991320C1Eb1B17808F742DE92410bC,
+      250000000000000000000,
+      300000000000000000000
+    ]
    ```
 4. Decode error logs:
 
@@ -88,7 +97,12 @@ Below are examples of how to use the tool. Please note that all these commands w
    $ sel2sig ./artifacts ./file_with_error_logs
 
     error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed)
-    args: [0xe058fBFD6e991320C1Eb1B17808F742DE92410bC 250000000000000000000 300000000000000000000]
+
+    decoded args: [
+      0xe058fBFD6e991320C1Eb1B17808F742DE92410bC,
+      250000000000000000000,
+      300000000000000000000
+    ]
    ```
    Where file_with_error_logs may include stack traces, error messages, transaction details etc
 
