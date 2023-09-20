@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/golden-expiriensu/sel2sig/fmtabi"
 	"github.com/golden-expiriensu/sel2sig/input"
 	"github.com/golden-expiriensu/sel2sig/search"
 )
@@ -24,9 +25,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	unpacked, err := result.Unpack(in.SelectorWithArgs())
+	args, err := result.Unpack(in.SelectorWithArgs())
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("args: %v\n", unpacked)
+	fmt.Printf("\ndecoded args: %v\n", fmtabi.FormatArgs(args))
 }
