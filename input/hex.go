@@ -1,12 +1,12 @@
 package input
 
-import "github.com/ethereum/go-ethereum/common/hexutil"
+import "encoding/hex"
 
 func decodeHexString(input string) ([]byte, error) {
-	if !has0xPrefix(input) {
-		input = "0x" + input
+	if has0xPrefix(input) {
+		input = input[2:]
 	}
-	return hexutil.Decode(input)
+	return hex.DecodeString(input)
 }
 
 func has0xPrefix(input string) bool {
