@@ -33,7 +33,7 @@ To build **sel2sig**, follow these steps:
 1. Clone this repository to [GOPATH](https://pkg.go.dev/cmd/go#hdr-GOPATH_environment_variable)/src/:
 
    ```
-   cd "$(go env GOPATH)" && git clone https://github.com/golden-expiriensu/sel2sig
+   cd "$(go env GOPATH)/src" && git clone https://github.com/golden-expiriensu/sel2sig
    ```
 
 2. Execute the following command to build the tool:
