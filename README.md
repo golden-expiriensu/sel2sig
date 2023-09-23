@@ -36,22 +36,10 @@ To build **sel2sig**, follow these steps:
    cd "$(go env GOPATH)/src" && git clone https://github.com/golden-expiriensu/sel2sig
    ```
 
-2. Execute the following command to build the tool:
+2. Execute install script:
 
    ```
-   go build -o sel2sig
-   ```
-
-3. Make the tool executable by running:
-
-   ```
-   chmod +x sel2sig
-   ```
-
-4. Move executable to the system's PATH so that you can run it from any location:
-
-   ```
-   sudo mv sel2sig /usr/local/bin
+   ./install.sh
    ```
 
 ## Example Usage
