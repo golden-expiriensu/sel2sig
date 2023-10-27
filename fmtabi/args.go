@@ -64,7 +64,7 @@ func formatSlice(arr interface{}, callDepth int) string {
 		elems = append(elems, elem)
 	}
 	content := strings.Join(elems, createSeparator(callDepth))
-	return fmt.Sprintf("[\n%v%v\n]", createPadding(callDepth), content)
+	return fmt.Sprintf("[\n%v%v\n%v]", createPadding(callDepth), content, createPadding(callDepth-1))
 }
 
 func createSeparator(callDepth int) string {
